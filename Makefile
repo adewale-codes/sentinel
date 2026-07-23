@@ -1,4 +1,4 @@
-.PHONY: up down down-v migrate test logs ps
+.PHONY: up down down-v migrate train test logs ps
 
 up:
 	docker compose up -d --build
@@ -11,6 +11,9 @@ down-v:
 
 migrate:
 	docker compose exec api alembic upgrade head
+
+train:
+	docker compose exec api python ml/train.py
 
 test:
 	docker compose exec api pytest
