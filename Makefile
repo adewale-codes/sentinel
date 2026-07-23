@@ -1,4 +1,4 @@
-.PHONY: up down down-v migrate train test logs ps
+.PHONY: up down down-v migrate train seed-drift monitor test logs ps
 
 up:
 	docker compose up -d --build
@@ -14,6 +14,12 @@ migrate:
 
 train:
 	docker compose exec api python ml/train.py
+
+seed-drift:
+	docker compose exec api python ml/seed_predictions.py
+
+monitor:
+	curl -X POST http://localhost:8000/api/monitoring/run
 
 test:
 	docker compose exec api pytest
