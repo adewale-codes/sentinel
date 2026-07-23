@@ -18,6 +18,11 @@ class TransactionInput(BaseModel):
 class PredictionResponse(BaseModel):
     prediction_id: UUID
     transaction_id: Optional[str]
+    amount: Optional[float] = None
+    time_of_day: Optional[int] = None
+    location_mismatch: Optional[bool] = None
+    transaction_velocity: Optional[int] = None
+    account_age_days: Optional[int] = None
     is_fraud: bool
     confidence: float
     model_version: str

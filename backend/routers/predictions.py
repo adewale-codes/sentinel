@@ -45,7 +45,8 @@ async def predict(transaction: TransactionInput, db: AsyncSession = Depends(get_
             (:model_version_id, :transaction_id, :amount, :merchant_category, :time_of_day,
              :location_mismatch, :transaction_velocity, :account_age_days, :prediction,
              :confidence, :is_fraud, :raw_features)
-            RETURNING id, transaction_id, is_fraud, confidence, predicted_at
+            RETURNING id, transaction_id, amount, time_of_day, location_mismatch,
+                      transaction_velocity, account_age_days, is_fraud, confidence, predicted_at
             """
         ),
         {
@@ -69,6 +70,11 @@ async def predict(transaction: TransactionInput, db: AsyncSession = Depends(get_
     return PredictionResponse(
         prediction_id=row.id,
         transaction_id=row.transaction_id,
+        amount=float(row.amount) if row.amount is not None else None,
+        time_of_day=row.time_of_day,
+        location_mismatch=row.location_mismatch,
+        transaction_velocity=row.transaction_velocity,
+        account_age_days=row.account_age_days,
         is_fraud=row.is_fraud,
         confidence=float(row.confidence),
         model_version=version,
@@ -82,8 +88,9 @@ async def prediction_history(
     db: AsyncSession = Depends(get_db),
 ):
     query = """
-        SELECT p.id, p.transaction_id, p.is_fraud, p.confidence, p.predicted_at,
-               mv.version AS model_version
+        SELECT p.id, p.transaction_id, p.amount, p.time_of_day, p.location_mismatch,
+               p.transaction_velocity, p.account_age_days, p.is_fraud, p.confidence,
+               p.predicted_at, mv.version AS model_version
         FROM predictions p
         LEFT JOIN model_versions mv ON mv.id = p.model_version_id
     """
@@ -100,6 +107,11 @@ async def prediction_history(
         PredictionResponse(
             prediction_id=row.id,
             transaction_id=row.transaction_id,
+            amount=float(row.amount) if row.amount is not None else None,
+            time_of_day=row.time_of_day,
+            location_mismatch=row.location_mismatch,
+            transaction_velocity=row.transaction_velocity,
+            account_age_days=row.account_age_days,
             is_fraud=row.is_fraud,
             confidence=float(row.confidence) if row.confidence is not None else 0.0,
             model_version=row.model_version or "unknown",

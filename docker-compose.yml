@@ -27,6 +27,8 @@ services:
       - .env
     ports:
       - "8000:8000"
+    volumes:
+      - model_store:/app/ml/models
     depends_on:
       db:
         condition: service_healthy
@@ -53,3 +55,4 @@ networks:
 
 volumes:
   pgdata:
+  model_store:
