@@ -1,0 +1,14 @@
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+sqlalchemy
+asyncpg
+alembic
+psycopg2-binary
+python-dotenv
+pydantic-settings
+httpx
+scikit-learn
+pandas
+numpy
+joblib
+apscheduler
